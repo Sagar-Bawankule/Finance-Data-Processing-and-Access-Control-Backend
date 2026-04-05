@@ -46,6 +46,7 @@ describe('Dashboard API', () => {
   let app;
   let userToken;
   let testUser;
+  let adminUser;
 
   beforeAll(async () => {
     await connect();
@@ -59,6 +60,12 @@ describe('Dashboard API', () => {
       email: 'test@example.com',
       password: 'password123',
       role: 'viewer'
+    });
+    adminUser = await User.create({
+      name: 'Admin User',
+      email: 'admin@example.com',
+      password: 'password123',
+      role: 'admin'
     });
     userToken = generateToken(testUser._id);
 
@@ -101,6 +108,50 @@ describe('Dashboard API', () => {
 
       expect(res.statusCode).toBe(401);
       expect(res.body.success).toBe(false);
+    });
+
+    it('should include organization totals for analyst users', async () => {
+      await Record.create({
+        userId: adminUser._id,
+        amount: 1000,
+        type: 'income',
+        category: 'bonus',
+        date: new Date('2024-01-22')
+      });
+
+      testUser.role = 'analyst';
+      await testUser.save();
+      const analystToken = generateToken(testUser._id);
+
+      const res = await request(app)
+        .get('/api/dashboard/summary')
+        .set('Authorization', `Bearer ${analystToken}`);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.totalIncome).toBe(8000);
+      expect(res.body.data.totalExpense).toBe(1800);
+      expect(res.body.data.netBalance).toBe(6200);
+    });
+
+    it('should include organization totals for viewer users', async () => {
+      await Record.create({
+        userId: adminUser._id,
+        amount: 1000,
+        type: 'income',
+        category: 'bonus',
+        date: new Date('2024-01-22')
+      });
+
+      const res = await request(app)
+        .get('/api/dashboard/summary')
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.totalIncome).toBe(8000);
+      expect(res.body.data.totalExpense).toBe(1800);
+      expect(res.body.data.netBalance).toBe(6200);
     });
   });
 

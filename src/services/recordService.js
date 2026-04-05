@@ -1,21 +1,31 @@
+const mongoose = require('mongoose');
 const Record = require('../models/Record');
 
 class RecordService {
-  // Build query for filtering records
-  buildQuery(userId, filters) {
-    const query = { userId };
+  buildReadScope(user) {
+    if (!user) {
+      return {};
+    }
 
-    // Filter by type
+    if (user.role === 'admin' || user.role === 'analyst') {
+      return {};
+    }
+
+    const userId = user._id || user.id || user;
+    return { userId: new mongoose.Types.ObjectId(userId) };
+  }
+
+  buildQuery(user, filters) {
+    const query = this.buildReadScope(user);
+
     if (filters.type && ['income', 'expense'].includes(filters.type)) {
       query.type = filters.type;
     }
 
-    // Filter by category
     if (filters.category) {
       query.category = filters.category;
     }
 
-    // Filter by date range
     if (filters.startDate || filters.endDate) {
       query.date = {};
       if (filters.startDate) {
@@ -26,12 +36,10 @@ class RecordService {
       }
     }
 
-    // Search in notes
     if (filters.search) {
       query.note = { $regex: filters.search, $options: 'i' };
     }
 
-    // Include deleted records if specified
     if (filters.includeDeleted) {
       query.isDeleted = { $in: [true, false] };
     }
@@ -39,9 +47,8 @@ class RecordService {
     return query;
   }
 
-  // Get paginated records with filters
-  async getRecords(userId, filters = {}, options = {}) {
-    const query = this.buildQuery(userId, filters);
+  async getRecords(user, filters = {}, options = {}) {
+    const query = this.buildQuery(user, filters);
     
     const page = parseInt(options.page, 10) || 1;
     const limit = parseInt(options.limit, 10) || 10;
@@ -71,7 +78,6 @@ class RecordService {
     };
   }
 
-  // Create a new record
   async createRecord(userId, recordData) {
     const record = new Record({
       ...recordData,
@@ -80,12 +86,14 @@ class RecordService {
     return await record.save();
   }
 
-  // Get a single record
-  async getRecordById(recordId, userId) {
-    return await Record.findOne({ _id: recordId, userId });
+  async getRecordById(recordId, user) {
+    const query = {
+      _id: recordId,
+      ...this.buildReadScope(user)
+    };
+    return await Record.findOne(query);
   }
 
-  // Update a record
   async updateRecord(recordId, userId, updateData) {
     const record = await Record.findOneAndUpdate(
       { _id: recordId, userId },
@@ -95,7 +103,6 @@ class RecordService {
     return record;
   }
 
-  // Soft delete a record
   async deleteRecord(recordId, userId) {
     const record = await Record.findOneAndUpdate(
       { _id: recordId, userId },
@@ -105,13 +112,11 @@ class RecordService {
     return record;
   }
 
-  // Permanently delete a record (hard delete)
   async hardDeleteRecord(recordId, userId) {
     const record = await Record.findOneAndDelete({ _id: recordId, userId, isDeleted: true });
     return record;
   }
 
-  // Restore a soft-deleted record
   async restoreRecord(recordId, userId) {
     const record = await Record.findOneAndUpdate(
       { _id: recordId, userId, isDeleted: true },
@@ -121,7 +126,6 @@ class RecordService {
     return record;
   }
 
-  // Get deleted records
   async getDeletedRecords(userId, options = {}) {
     const page = parseInt(options.page, 10) || 1;
     const limit = parseInt(options.limit, 10) || 10;

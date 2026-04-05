@@ -1,10 +1,10 @@
 # Finance Dashboard Backend
 
-A comprehensive finance dashboard backend with role-based access control, featuring financial records management, dashboard analytics, and robust security implementations.
+Backend API for a finance dashboard with authentication, role-based access control, records management, and analytics endpoints.
 
 ## 🎯 Project Overview
 
-This backend system demonstrates enterprise-grade API design for a finance dashboard application. It implements secure user authentication, role-based authorization, financial data management with soft-delete capabilities, and comprehensive dashboard analytics.
+This project provides secure APIs for user auth, role management, financial records, and dashboard insights.
 
 ### Key Features
 - **Role-Based Access Control**: Three-tier user hierarchy (Viewer, Analyst, Admin)
@@ -29,9 +29,9 @@ This backend system demonstrates enterprise-grade API design for a finance dashb
 ### User Roles & Permissions Matrix
 | Role | Dashboard Access | Records (Read) | Records (Write) | User Management |
 |------|------------------|----------------|-----------------|------------------|
-| **Viewer** | ✅ View summaries | ❌ No access | ❌ No access | ❌ No access |
-| **Analyst** | ✅ Full analytics | ✅ Read/Filter | ❌ No write access | ❌ No access |
-| **Admin** | ✅ Full analytics | ✅ Full access | ✅ CRUD + Restore | ✅ Full user mgmt |
+| **Viewer** | ✅ Organization insights | ❌ No access | ❌ No access | ❌ No access |
+| **Analyst** | ✅ Organization insights | ✅ Organization records | ❌ No write access | ❌ No access |
+| **Admin** | ✅ Organization insights | ✅ Full access | ✅ CRUD + Restore | ✅ Full user mgmt |
 
 ### User Journey & Role Assignment
 
@@ -201,21 +201,10 @@ npm run test:watch
 ```
 
 **Test Coverage:**
-- 40+ comprehensive test cases
 - Auth, Records, Dashboard, and User management endpoints
 - Uses mongodb-memory-server for isolated testing
-- Covers success scenarios, error handling, and edge cases
+- Includes happy-path and error-path validation
 
-### Example Test Run
-```bash
-> npm test
-✓ Auth tests (10 passed)
-✓ Records tests (15 passed) 
-✓ Dashboard tests (8 passed)
-✓ User management tests (7 passed)
-
-Total: 40 tests passed | Coverage: 85%+
-```
 
 ## 🔒 Security Features
 
@@ -312,17 +301,20 @@ Total: 40 tests passed | Coverage: 85%+
 - **Development**: Detailed error messages, file watching
 - **Production**: Error message sanitization, performance optimizations
 
----
+## 📸 UI Screenshots
 
-**Assignment Requirements Coverage:**
-✅ User and Role Management  
-✅ Financial Records Management  
-✅ Dashboard Summary APIs  
-✅ Access Control Logic  
-✅ Validation and Error Handling  
-✅ Data Persistence with MongoDB  
-✅ **Bonus**: Authentication, Pagination, Soft Delete, Rate Limiting, Tests, Documentation
+### Admin - User Management
+![Admin User Management](public/images/Admin%20user%20mangement.png)
 
-**Submission Ready**: Clean codebase, comprehensive documentation, tested functionality, and production-ready architecture.
+### Admin - Dashboard
+![Admin Dashboard](public/images/admin%20dashboard%20.png)
 
-Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+### Admin - Financial Records
+![Admin Financial Records](public/images/admin%20financial%20record.png)
+
+### Analyst - Dashboard
+![Analyst Dashboard](public/images/anaylist%20dashboard.png)
+
+### Viewer - Dashboard
+![Viewer Dashboard](public/images/viewer%20dashboard.png)
+

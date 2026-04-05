@@ -5,7 +5,7 @@ const { dashboardService } = require('../services');
 // @access  Private/All authenticated users
 const getDashboardSummary = async (req, res, next) => {
   try {
-    const summary = await dashboardService.getDashboardSummary(req.user.id);
+    const summary = await dashboardService.getDashboardSummary(req.user);
 
     res.status(200).json({
       success: true,
@@ -21,7 +21,7 @@ const getDashboardSummary = async (req, res, next) => {
 // @access  Private/All authenticated users
 const getTotalIncome = async (req, res, next) => {
   try {
-    const totalIncome = await dashboardService.getTotalIncome(req.user.id);
+    const totalIncome = await dashboardService.getTotalIncome(req.user);
 
     res.status(200).json({
       success: true,
@@ -37,7 +37,7 @@ const getTotalIncome = async (req, res, next) => {
 // @access  Private/All authenticated users
 const getTotalExpense = async (req, res, next) => {
   try {
-    const totalExpense = await dashboardService.getTotalExpense(req.user.id);
+    const totalExpense = await dashboardService.getTotalExpense(req.user);
 
     res.status(200).json({
       success: true,
@@ -53,7 +53,7 @@ const getTotalExpense = async (req, res, next) => {
 // @access  Private/All authenticated users
 const getNetBalance = async (req, res, next) => {
   try {
-    const netBalance = await dashboardService.getNetBalance(req.user.id);
+    const netBalance = await dashboardService.getNetBalance(req.user);
 
     res.status(200).json({
       success: true,
@@ -69,7 +69,7 @@ const getNetBalance = async (req, res, next) => {
 // @access  Private/All authenticated users
 const getCategoryTotals = async (req, res, next) => {
   try {
-    const categoryTotals = await dashboardService.getCategoryTotals(req.user.id);
+    const categoryTotals = await dashboardService.getCategoryTotals(req.user);
 
     res.status(200).json({
       success: true,
@@ -86,7 +86,7 @@ const getCategoryTotals = async (req, res, next) => {
 const getMonthlyTrends = async (req, res, next) => {
   try {
     const year = req.query.year ? parseInt(req.query.year, 10) : undefined;
-    const monthlyTrends = await dashboardService.getMonthlyTrends(req.user.id, year);
+    const monthlyTrends = await dashboardService.getMonthlyTrends(req.user, year);
 
     res.status(200).json({
       success: true,
@@ -103,7 +103,7 @@ const getMonthlyTrends = async (req, res, next) => {
 const getRecentActivity = async (req, res, next) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
-    const recentActivity = await dashboardService.getRecentActivity(req.user.id, limit);
+    const recentActivity = await dashboardService.getRecentActivity(req.user, limit);
 
     res.status(200).json({
       success: true,

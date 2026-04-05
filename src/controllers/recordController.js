@@ -45,7 +45,7 @@ const getRecords = async (req, res, next) => {
       sortOrder: req.query.sortOrder
     };
 
-    const result = await recordService.getRecords(req.user.id, filters, options);
+    const result = await recordService.getRecords(req.user, filters, options);
 
     res.status(200).json({
       success: true,
@@ -61,7 +61,7 @@ const getRecords = async (req, res, next) => {
 // @access  Private/Analyst, Admin
 const getRecord = async (req, res, next) => {
   try {
-    const record = await recordService.getRecordById(req.params.id, req.user.id);
+    const record = await recordService.getRecordById(req.params.id, req.user);
 
     if (!record) {
       return res.status(404).json({

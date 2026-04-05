@@ -2,12 +2,25 @@ const Record = require('../models/Record');
 const mongoose = require('mongoose');
 
 class DashboardService {
-  // Get total income for a user
-  async getTotalIncome(userId) {
+  buildDashboardMatch(user) {
+    if (!user) {
+      return {};
+    }
+
+    if (user.role === 'admin' || user.role === 'analyst' || user.role === 'viewer') {
+      return {};
+    }
+
+    const userId = user._id || user.id || user;
+    return { userId: new mongoose.Types.ObjectId(userId) };
+  }
+
+  async getTotalIncome(user) {
+    const matchScope = this.buildDashboardMatch(user);
     const result = await Record.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(userId),
+          ...matchScope,
           type: 'income'
         }
       },
@@ -22,12 +35,12 @@ class DashboardService {
     return result.length > 0 ? result[0].total : 0;
   }
 
-  // Get total expense for a user
-  async getTotalExpense(userId) {
+  async getTotalExpense(user) {
+    const matchScope = this.buildDashboardMatch(user);
     const result = await Record.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(userId),
+          ...matchScope,
           type: 'expense'
         }
       },
@@ -42,19 +55,18 @@ class DashboardService {
     return result.length > 0 ? result[0].total : 0;
   }
 
-  // Get net balance (income - expense)
-  async getNetBalance(userId) {
-    const income = await this.getTotalIncome(userId);
-    const expense = await this.getTotalExpense(userId);
+  async getNetBalance(user) {
+    const income = await this.getTotalIncome(user);
+    const expense = await this.getTotalExpense(user);
     return income - expense;
   }
 
-  // Get category-wise totals
-  async getCategoryTotals(userId) {
+  async getCategoryTotals(user) {
+    const matchScope = this.buildDashboardMatch(user);
     const result = await Record.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(userId)
+          ...matchScope
         }
       },
       {
@@ -84,14 +96,14 @@ class DashboardService {
     return result;
   }
 
-  // Get monthly trends
-  async getMonthlyTrends(userId, year) {
+  async getMonthlyTrends(user, year) {
     const targetYear = year || new Date().getFullYear();
+    const matchScope = this.buildDashboardMatch(user);
 
     const result = await Record.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(userId),
+          ...matchScope,
           date: {
             $gte: new Date(`${targetYear}-01-01`),
             $lt: new Date(`${targetYear + 1}-01-01`)
@@ -122,7 +134,6 @@ class DashboardService {
       }
     ]);
 
-    // Format result to have all 12 months
     const monthlyData = [];
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -150,10 +161,10 @@ class DashboardService {
     };
   }
 
-  // Get recent activity
-  async getRecentActivity(userId, limit = 10) {
+  async getRecentActivity(user, limit = 10) {
     const safeLimit = Number.isFinite(limit) ? Math.max(1, Math.min(50, limit)) : 10;
-    const records = await Record.find({ userId })
+    const query = this.buildDashboardMatch(user);
+    const records = await Record.find(query)
       .sort({ date: -1, createdAt: -1 })
       .limit(safeLimit)
       .lean();
@@ -168,14 +179,13 @@ class DashboardService {
     }));
   }
 
-  // Get complete dashboard summary
-  async getDashboardSummary(userId) {
+  async getDashboardSummary(user) {
     const [totalIncome, totalExpense, categoryTotals, monthlyTrends, recentActivity] = await Promise.all([
-      this.getTotalIncome(userId),
-      this.getTotalExpense(userId),
-      this.getCategoryTotals(userId),
-      this.getMonthlyTrends(userId),
-      this.getRecentActivity(userId, 5)
+      this.getTotalIncome(user),
+      this.getTotalExpense(user),
+      this.getCategoryTotals(user),
+      this.getMonthlyTrends(user),
+      this.getRecentActivity(user, 5)
     ]);
 
     return {

@@ -212,18 +212,14 @@ describe('Records API', () => {
       expect(res.body.data.pagination).toBeDefined();
     });
 
-    it('should get records as analyst', async () => {
-      // Create records for analyst
-      await Record.create({
-        userId: analystUser._id, amount: 1000, type: 'income', category: 'salary', date: new Date()
-      });
-
+    it('should allow analyst to view records created by other users', async () => {
       const res = await request(app)
         .get('/api/records')
         .set('Authorization', `Bearer ${analystToken}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
+      expect(res.body.data.records.length).toBe(3);
     });
 
     it('should fail to get records as viewer', async () => {
