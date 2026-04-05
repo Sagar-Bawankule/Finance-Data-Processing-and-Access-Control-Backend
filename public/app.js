@@ -79,12 +79,12 @@ function renderAuth() {
   if (!isLoggedIn) {
     el('recordsSection').classList.add('hidden');
     el('usersSection').classList.add('hidden');
-    el('authInfo').textContent = 'Not logged in';
+    el('authInfo').innerHTML = '<span class="badge">Guest</span> Not logged in';
     return;
   }
 
   const role = state.user.role;
-  el('authInfo').textContent = `${state.user.name} (${state.user.email}) · role: ${role}`;
+  el('authInfo').innerHTML = `<span>${state.user.name} (${state.user.email})</span> <span class="badge">${role}</span>`;
 
   el('recordsSection').classList.toggle('hidden', !canAccessRecords(role));
   el('usersSection').classList.toggle('hidden', !canManageUsers(role));
@@ -408,7 +408,7 @@ function initForms() {
 
   el('logoutBtn').addEventListener('click', () => {
     clearAuth();
-    showToast('Logged out');
+    showToast('Logout successful');
   });
 
   el('recordFilterForm').addEventListener('submit', async (evt) => {

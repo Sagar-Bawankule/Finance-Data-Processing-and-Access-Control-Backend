@@ -9,14 +9,22 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <h1>Finance Dashboard</h1>
-      <div id="authInfo" class="auth-info"></div>
-      <button id="logoutBtn" class="btn btn-secondary hidden">Logout</button>
+      <div class="brand-block">
+        <h1>Finance Dashboard</h1>
+        <p class="subtitle">Track records, monitor trends, and manage access in one place.</p>
+      </div>
+      <div class="session-block">
+        <div id="authInfo" class="auth-info"></div>
+        <button id="logoutBtn" class="btn btn-secondary hidden">Logout</button>
+      </div>
     </header>
 
-    <main>
+    <main class="main-content">
       <section id="authSection" class="card">
-        <h2>Sign In / Register</h2>
+        <div class="section-head">
+          <h2>Sign In / Register</h2>
+          <p>Use your account to open the dashboard. New users are created as Viewer by default.</p>
+        </div>
         <div class="tabs">
           <button id="showLogin" class="tab active">Login</button>
           <button id="showRegister" class="tab">Register</button>
@@ -39,9 +47,9 @@
 
       <section id="dashboardSection" class="hidden">
         <div class="grid kpi-grid">
-          <div class="card"><h3>Total Income</h3><p id="kpiIncome">0</p></div>
-          <div class="card"><h3>Total Expense</h3><p id="kpiExpense">0</p></div>
-          <div class="card"><h3>Net Balance</h3><p id="kpiBalance">0</p></div>
+          <div class="card kpi-card"><h3>Total Income</h3><p id="kpiIncome">0</p></div>
+          <div class="card kpi-card"><h3>Total Expense</h3><p id="kpiExpense">0</p></div>
+          <div class="card kpi-card"><h3>Net Balance</h3><p id="kpiBalance">0</p></div>
         </div>
 
         <div class="grid two-col">
