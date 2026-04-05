@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -34,7 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(cors());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Rate limiting for API routes
 app.use('/api', apiLimiter);
@@ -63,7 +64,7 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Root serves frontend static index
 app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: 'public' });
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Error handling
