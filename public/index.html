@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <h1>Finance Dashboard</h1>
+      <div id="authInfo" class="auth-info"></div>
+      <button id="logoutBtn" class="btn btn-secondary hidden">Logout</button>
+    </header>
+
+    <main>
+      <section id="authSection" class="card">
+        <h2>Sign In / Register</h2>
+        <div class="tabs">
+          <button id="showLogin" class="tab active">Login</button>
+          <button id="showRegister" class="tab">Register</button>
+        </div>
+
+        <form id="loginForm" class="form">
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Password<input name="password" type="password" required /></label>
+          <button class="btn" type="submit">Login</button>
+        </form>
+
+        <form id="registerForm" class="form hidden">
+          <label>Name<input name="name" type="text" required /></label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Password<input name="password" type="password" minlength="6" required /></label>
+          <small>New registrations are created as <strong>Viewer</strong>. Admin can change role later.</small>
+          <button class="btn" type="submit">Register</button>
+        </form>
+      </section>
+
+      <section id="dashboardSection" class="hidden">
+        <div class="grid kpi-grid">
+          <div class="card"><h3>Total Income</h3><p id="kpiIncome">0</p></div>
+          <div class="card"><h3>Total Expense</h3><p id="kpiExpense">0</p></div>
+          <div class="card"><h3>Net Balance</h3><p id="kpiBalance">0</p></div>
+        </div>
+
+        <div class="grid two-col">
+          <section class="card">
+            <h3>Category Totals</h3>
+            <div id="categoryTotals"></div>
+          </section>
+
+          <section class="card">
+            <h3>Recent Activity</h3>
+            <div id="recentActivity"></div>
+          </section>
+        </div>
+
+        <section class="card">
+          <h3>Monthly Trends</h3>
+          <label>Year <input id="trendYear" type="number" min="2000" max="2100" /></label>
+          <button id="loadTrends" class="btn">Load Trends</button>
+          <div id="monthlyTrends"></div>
+        </section>
+      </section>
+
+        <section id="recordsSection" class="card hidden">
+          <h2>Financial Records</h2>
+
+        <form id="recordFilterForm" class="inline-form">
+          <select name="type">
+            <option value="">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <input name="category" placeholder="Category" />
+          <input name="startDate" type="date" />
+          <input name="endDate" type="date" />
+          <input name="search" placeholder="Search note" />
+          <button class="btn" type="submit">Apply Filters</button>
+        </form>
+
+        <form id="recordForm" class="form hidden">
+          <h3 id="recordFormTitle">Add Record</h3>
+          <input type="hidden" name="id" />
+          <label>Amount<input name="amount" type="number" step="0.01" min="0.01" required /></label>
+          <label>Type
+            <select name="type" required>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </label>
+          <label>Category<input name="category" required /></label>
+          <label>Date<input name="date" type="date" required /></label>
+          <label>Note<input name="note" /></label>
+          <div class="row">
+            <button class="btn" type="submit">Save</button>
+            <button id="cancelEditRecord" class="btn btn-secondary" type="button">Cancel</button>
+          </div>
+        </form>
+
+        <div id="recordsTableWrap"></div>
+        <div id="recordsPagination" class="row"></div>
+        <div id="deletedRecordsWrap" class="hidden" style="margin-top:12px;">
+          <h3>Deleted Records (Admin)</h3>
+          <div id="deletedRecordsTable"></div>
+        </div>
+      </section>
+
+      <section id="usersSection" class="card hidden">
+        <h2>User Management (Admin)</h2>
+        <div id="usersTableWrap"></div>
+      </section>
+
+      <div id="toast" class="toast hidden"></div>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
