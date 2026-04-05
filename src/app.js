@@ -62,8 +62,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/records', recordRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-// Root serves frontend static index
-app.get('/', (req, res) => {
+// Support SPA routing by serving index.html for all non-API routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path === '/health') {
+    return next();
+  }
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
