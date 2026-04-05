@@ -35,7 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(cors());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.static(path.join(__dirname, '../public')));
+// Static files are served by Vercel's CDN, not Express
 
 // Rate limiting for API routes
 app.use('/api', apiLimiter);
@@ -62,12 +62,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/records', recordRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-// Support SPA routing by serving index.html for all non-API routes
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api') || req.path === '/health') {
-    return next();
-  }
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+// Root route - API info
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Finance Dashboard API is running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    docs: '/api-docs'
+  });
 });
 
 // Error handling
